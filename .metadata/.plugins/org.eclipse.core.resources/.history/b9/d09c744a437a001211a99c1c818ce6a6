@@ -1,0 +1,42 @@
+package com.example.webview;
+
+import android.os.Bundle;
+import android.app.Activity;
+import android.view.Menu;
+import android.webkit.WebView;
+
+public class MainActivity extends Activity {
+
+	WebView webview;
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+        webview = new WebView(this);		
+
+        // Enable JavaScript overall
+        WebSettings settings = webview.getSettings();
+        settings.setJavaScriptEnabled(true);
+        
+        // Enable JavaScript Alerts
+        webview.setWebChromeClient(new WebChromeClient() {
+        	public boolean onJSAlert(WebView view, String url, String message, JsResult result)
+        	{
+        		return true;
+        	}
+        });
+
+        setContentView(webview);
+        
+        webview.loadUrl("http://www.mobvcasting.com/mmtest/index.html");        
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.activity_main, menu);
+		return true;
+	}
+
+}
