@@ -15,13 +15,6 @@ public class MainActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) 
 	{
         super.onCreate(savedInstanceState);
-        
-        //simplest way to load in a webpage (although js wont work)
-        //webview = new WebView(this);		
-        //webview.loadUrl("http://www.mobvcasting.com/mmtest/index.html");
-        //setContentView(webview);
-        
-        
         webview = new WebView(this);		
 
         // Enable JavaScript overall

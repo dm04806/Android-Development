@@ -1,0 +1,26 @@
+package com.example.webview;
+
+import android.os.Bundle;
+import android.app.Activity;
+import android.webkit.WebView;
+import android.webkit.WebSettings;
+import android.webkit.WebChromeClient;
+import android.webkit.JsResult;
+
+public class MainActivity extends Activity {
+
+	WebView webview;
+    
+	@Override
+    public void onCreate(Bundle savedInstanceState) 
+	{
+        super.onCreate(savedInstanceState);
+        webview = new WebView(this);		
+
+        webview.loadUrl("http://www.mobvcasting.com/mmtest/index.html");
+        setContentView(webview);
+        
+        
+    }
+
+}
