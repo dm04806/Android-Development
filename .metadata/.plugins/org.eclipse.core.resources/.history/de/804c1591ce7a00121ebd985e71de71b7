@@ -47,14 +47,14 @@ public class MainActivity extends Activity {
 		
 		if(requestCode == CAMERA_RESULT ){
 			/*
-			//displays image without saving it to SD card
+			//displays image without saving it to SD
 			Bundle extras = intent.getExtras(); 
 			Bitmap bmp = (Bitmap) extras.get("data");
 			ImageView imageView = (ImageView) this.findViewById(R.id.imageView1);
 			imageView.setImageBitmap(bmp);
 			*/
 			
-			//load image from SD disk to get correct image size
+			//load image from SD disk
 			BitmapFactory.Options bmpFactoryOptions = new BitmapFactory.Options(); 
 			bmpFactoryOptions.inSampleSize = 8; //only load up 1/8 of fullsize image
 			Bitmap bmp = BitmapFactory.decodeFile(imageFilePath, bmpFactoryOptions);
