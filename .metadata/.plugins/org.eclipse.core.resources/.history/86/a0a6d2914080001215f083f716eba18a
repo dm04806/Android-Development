@@ -1,0 +1,22 @@
+package com.example.drawingview;
+
+import android.content.Context;
+import android.view.View;
+
+public class MyDrawingView extends View{
+
+	public MyDrawingView(Context context) {
+		super(context);
+
+	}
+	
+	public MyDrawingView(Context context, AttributeSet attr){
+		super(context, attrs);
+		
+	}
+	
+	public MyDrawingView(Context context, AttributeSet attr, int defStyle){
+		super(context, attrs, defStyle);
+	}
+
+}

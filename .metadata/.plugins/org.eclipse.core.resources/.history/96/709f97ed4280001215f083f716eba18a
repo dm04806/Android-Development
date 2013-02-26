@@ -1,0 +1,57 @@
+package com.example.drawingview;
+
+import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.util.AttributeSet;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnTouchListener;
+
+public class MyDrawingView extends View implements OnTouchListener{
+
+	public MyDrawingView(Context context) {
+		super(context);
+		setOnTouchListener(this);
+	}
+	
+	public MyDrawingView(Context context, AttributeSet attr){
+		super(context, attr);
+		setOnTouchListener(this);
+		
+	}
+	
+	public MyDrawingView(Context context, AttributeSet attr, int defStyle){
+		super(context, attr, defStyle);
+		setOnTouchListener(this);
+	}
+	
+	@Override
+	protected void onDraw(Canvas canvas){
+		Paint paint = new Paint();
+		paint.setColor(Color.RED);
+		
+		canvas.drawCircle(getWidth()/2, getHeight()/2, 20, paint);
+	}
+
+	@Override
+	public boolean onTouch(View arg0, MotionEvent event) {
+
+		int action = event.getAction();
+		switch(action){
+			case MotionEvent.ACTION_DOWN:
+				break;
+			case MotionEvent.ACTION_CANCEL:
+				break;
+			case MotionEvent.ACTION_POINTER_UP:
+				break;
+			case MotionEvent.ACTION_MOVE:
+				break;
+			case default:
+				break;
+		}
+		return false;
+	}
+
+}
