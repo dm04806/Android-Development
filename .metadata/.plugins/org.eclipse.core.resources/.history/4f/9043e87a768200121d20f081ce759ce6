@@ -1,0 +1,85 @@
+package com.example.imageprocessing;
+
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.RandomAccessFile;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileChannel.MapMode;
+
+import android.os.Bundle;
+import android.os.Environment;
+import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.util.Config;
+import android.util.Log;
+import android.view.Menu;
+import android.widget.ImageView;
+
+public class MainActivity extends Activity {
+
+	Bitmap myBitmap;
+	Bitmap mutableBitmap;
+	ImageView loadedImageView;
+	ImageView mutableImageView;
+
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_main);
+		
+		
+		//find image view in .xml
+		loadedImageView = (ImageView) this.findViewById(R.id.loadedImage);
+		mutableImageView = (ImageView) this.findViewById(R.id.mutableImage);
+		
+		
+		//load image
+		try {
+			InputStream is = this.getAssets().open("test.png");
+			myBitmap = BitmapFactory.decodeStream(is);
+			loadedImageView.setImageBitmap(myBitmap);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+
+		mutableBitmap = myBitmap.copy(Bitmap.Config.ARGB_8888, true);
+		
+		for(int x=0;x < myBitmap.getWidth(); x++){
+			for(int y=0;y < myBitmap.getHeight(); y++){
+				int index = y *  myBitmap.getWidth() + x;
+				int R = (myBitmap.getPixel(x,y) & 0x0000FF00) >> 8;
+				int G = (myBitmap.getPixel(x,y) & 0x00FF0000) >> 16;
+				int B = (myBitmap.getPixel(x,y) & 0x000000FF);
+				
+				int avg = (R + G + B) / 3;
+
+				mutableBitmap.setPixel(x, y, Color.argb(255, R, 0, 0) );
+				
+//				Log.v("colors", " " + avg);
+				
+			}
+		}
+		
+		mutableImageView.setImageBitmap(mutableBitmap);
+	}
+		
+
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.main, menu);
+		return true;
+	}
+
+}

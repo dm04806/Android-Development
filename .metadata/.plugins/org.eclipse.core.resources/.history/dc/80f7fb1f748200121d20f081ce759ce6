@@ -1,0 +1,125 @@
+package com.example.imageprocessing;
+
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileChannel.MapMode;
+
+import android.os.Bundle;
+import android.os.Environment;
+import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.util.Config;
+import android.util.Log;
+import android.view.Menu;
+import android.widget.ImageView;
+
+public class MainActivity extends Activity {
+
+	Bitmap myBitmap;
+	ImageView myImageView;
+
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_main);
+		
+		
+		//find image view in .xml
+		myImageView = (ImageView) this.findViewById(R.id.my_image_view);
+		
+		//load image
+		try {
+			InputStream is = this.getAssets().open("test.png");
+			myBitmap = BitmapFactory.decodeStream(is);
+			myImageView.setImageBitmap(myBitmap);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		
+		for(int x=0;x < myBitmap.getWidth(); x++){
+			for(int y=0;y < myBitmap.getHeight(); y++){
+				int index = y *  myBitmap.getWidth() + x;
+				int R = (myBitmap.getPixel(x,y) & 0x0000FF00) >> 8;
+				int G = (myBitmap.getPixel(x,y) & 0x00FF0000) >> 16;
+				int B = (myBitmap.getPixel(x,y) & 0x000000FF);
+				
+				int avg = (R + G + B) / 3;
+				//myBitmap.setPixel(x, y, avg);
+				
+//				Log.v("colors", " " + avg);
+				
+			}
+		}
+	}
+		
+		public Bitmap convertToMutable{Bitmap imgIn) {
+		    try {
+		        //this is the file going to use temporally to save the bytes. 
+		        // This file will not be a image, it will store the raw image data.
+		        File file = new File(Environment.getExternalStorageDirectory() + File.separator + "temp.tmp");
+
+		        //Open an RandomAccessFile
+		        //Make sure you have added uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+		        //into AndroidManifest.xml file
+		        RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rw");
+
+		        // get the width and height of the source bitmap.
+		        int width = imgIn.getWidth();
+		        int height = imgIn.getHeight();
+		        Config type = imgIn.getConfig();
+
+		        //Copy the byte to the file
+		        //Assume source bitmap loaded using options.inPreferredConfig = Config.ARGB_8888;
+		        FileChannel channel = randomAccessFile.getChannel();
+		        MappedByteBuffer map = channel.map(MapMode.READ_WRITE, 0, imgIn.getRowBytes()*height);
+		        imgIn.copyPixelsToBuffer(map);
+		        //recycle the source bitmap, this will be no longer used.
+		        imgIn.recycle();
+		        System.gc();// try to force the bytes from the imgIn to be released
+
+		        //Create a new bitmap to load the bitmap again. Probably the memory will be available. 
+		        imgIn = Bitmap.createBitmap(width, height, type);
+		        map.position(0);
+		        //load it back from temporary 
+		        imgIn.copyPixelsFromBuffer(map);
+		        //close the temporary file and channel , then delete that also
+		        channel.close();
+		        randomAccessFile.close();
+
+		        // delete the temp file
+		        file.delete();
+
+		    } catch (FileNotFoundException e) {
+		        e.printStackTrace();
+		    } catch (IOException e) {
+		        e.printStackTrace();
+		    } 
+
+		    return imgIn;
+		}
+		
+		
+	
+
+
+
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.main, menu);
+		return true;
+	}
+
+}

@@ -1,0 +1,100 @@
+package com.example.frontcamera;
+
+import android.os.Bundle;
+import android.app.Activity;
+import java.io.IOException;
+import android.content.Context;
+import android.hardware.Camera;
+import android.util.Log;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
+import android.view.Window;
+import android.view.WindowManager;
+
+// ----------------------------------------------------------------------
+
+public class MainActivity extends Activity {    
+    private Preview mPreview;
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // Hide the window title.
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        // Create our Preview view and set it as the content of our activity.
+        mPreview = new Preview(this);
+        setContentView(mPreview);
+
+    }
+}
+
+class Preview extends SurfaceView implements SurfaceHolder.Callback {
+    SurfaceHolder mHolder;
+    Camera mCamera;
+    boolean mFinished;
+
+    Preview(Context context) {
+        super(context);
+        
+        mFinished = false;
+
+        // Install a SurfaceHolder.Callback so we get notified when the
+        // underlying surface is created and destroyed.
+        mHolder = getHolder();
+        mHolder.addCallback(this);
+    }
+
+    public void surfaceCreated(SurfaceHolder holder) {
+        
+        int cameraCount = 0;
+        Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
+        cameraCount = Camera.getNumberOfCameras();
+        for ( int camIdx = 0; camIdx < cameraCount; camIdx++ ) {
+            Camera.getCameraInfo( camIdx, cameraInfo );
+            if ( cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT  ) {
+            	Log.v("TEST TEST", "THIS HAPPENDD");
+                try {
+                    mCamera = Camera.open( camIdx );
+                } catch (RuntimeException e) {
+                    Log.e("error", "Camera failed to open: " + e.getLocalizedMessage());
+                }
+            }
+        }
+        Camera.Parameters parameters=mCamera.getParameters();
+        mCamera.setParameters(parameters);
+//        
+//        try {
+//			mCamera.setPreviewDisplay(holder);
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+        
+    }
+
+    public void surfaceDestroyed(SurfaceHolder holder) {
+        // Surface will be destroyed when we return, so stop the preview.
+        // Because the CameraDevice object is not a shared resource, it's very
+        // important to release it when the activity is paused.
+    	mFinished = true;
+    	mCamera.setPreviewCallback(null);
+        mCamera.stopPreview();
+        mCamera.release();
+        mCamera = null;
+    }
+
+    public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
+        // Now that the size is known, set up the camera parameters and begin
+        // the preview.
+        Camera.Parameters parameters = mCamera.getParameters();
+        parameters.setPreviewSize(320, 240);
+        parameters.setSceneMode(Camera.Parameters.SCENE_MODE_NIGHT);
+        parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+        mCamera.setParameters(parameters);
+        mCamera.startPreview();
+    }
+
+}

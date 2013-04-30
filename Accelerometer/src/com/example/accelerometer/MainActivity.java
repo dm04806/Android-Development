@@ -7,6 +7,8 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.util.Log;
 import android.view.Menu;
 
@@ -22,6 +24,9 @@ public class MainActivity extends Activity implements SensorEventListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		//lock orientation
+		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		
 		myDrawingView =new DrawingView(this);
 		setContentView(myDrawingView);
@@ -63,5 +68,11 @@ public class MainActivity extends Activity implements SensorEventListener {
 		
 		myDrawingView.addToXandY(event.values[0], event.values[1]);
 	}
-
+	
+	//don't restart app on orientation change
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+	    super.onConfigurationChanged(newConfig);
+	}
+	
 }
